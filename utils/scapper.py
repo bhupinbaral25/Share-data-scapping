@@ -1,16 +1,16 @@
+import sys
+import time
+import pandas as pd
 
 from selenium import webdriver
 from datetime import datetime
 from bs4 import BeautifulSoup
-import pandas as pd
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import sys
-import time
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as EC
 class DataScrapper:
 	'''Class for data scrapping'''
 	def __init__(self):
@@ -65,6 +65,7 @@ class DataScrapper:
 		return self.df
 	
 	def get_clean_df(self) -> pd.DataFrame:
+
 		new_df = self.df.drop_duplicates(keep='first') # drop all duplicates
 		new_header = new_df.iloc[0] # grabing the first row for the header
 		new_df = new_df[1:] # taking the data lower than the header row
@@ -72,6 +73,3 @@ class DataScrapper:
 		new_df.drop(["S.No"], axis=1, inplace=True)
 
 		return new_df
-
-
-
