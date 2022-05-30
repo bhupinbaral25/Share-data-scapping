@@ -21,6 +21,7 @@ class DataScrapper:
 		options.add_argument="user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
 		self.driver = webdriver.Chrome(options=options)
 		self.driver.set_page_load_timeout(120)
+		self.df = pd.DataFrame()
 
 	def search(self) -> None:
 		self.driver.get("https://www.sharesansar.com/today-share-price")
@@ -50,7 +51,7 @@ class DataScrapper:
 
 	def get_scrape_data(self) -> pd.DataFrame:
 		self.search()
-		self.df = pd.DataFrame()
+		
 		count = 0
 		while True:
 			count += 1
