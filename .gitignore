@@ -1,0 +1,5 @@
+venv/
+__pychache__/
+notebook/
+scrape_nepse.py
+data
