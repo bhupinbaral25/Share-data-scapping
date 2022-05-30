@@ -5,7 +5,8 @@ from utils import DataScrapper, required_columns
 
 def save_data():
 	scrapper = DataScrapper()
-	data = scrapper.get_clean_df()
+	df = scrapper.get_scrape_data()
+	data = scrapper.get_clean_df(df)
 	date = scrapper.date
 	for symbol in [re.sub(r"[^A-Z]","",symbol) for symbol in list(data["Symbol"].unique())]:
 		df_scrape = data[data["Symbol"]==symbol]

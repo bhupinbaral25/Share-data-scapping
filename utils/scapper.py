@@ -51,23 +51,23 @@ class DataScrapper:
 
 	def get_scrape_data(self) -> pd.DataFrame:
 		self.search()
-		
+		df = pd.DataFrame()
 		count = 0
 		while True:
 			count += 1
 			print(f"Scraping Page {count}")
 			try:
-				self.df = self.df.append(self.get_page_table("table-bordered"))
+				df = df.append(self.get_page_table("table-bordered"))
 			except NoSuchElementException:
 				print("No more pages to scrape")
 				break
 			self.driver.find_element_by_xpath("//a[@class='next']").click()
 			time.sleep(2)
-		return self.df
+		return df
 	
-	def get_clean_df(self) -> pd.DataFrame:
+	def get_clean_df(self, df) -> pd.DataFrame:
 
-		new_df = self.df.drop_duplicates(keep='first') # drop all duplicates
+		new_df = df.drop_duplicates(keep='first') # drop all duplicates
 		new_header = new_df.iloc[0] # grabing the first row for the header
 		new_df = new_df[1:] # taking the data lower than the header row
 		new_df.columns = new_header # setting the header row as the df header
