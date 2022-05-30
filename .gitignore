@@ -3,3 +3,4 @@ __pychache__/
 notebook/
 scrape_nepse.py
 data
+utils/__pychache__
