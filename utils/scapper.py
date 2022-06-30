@@ -11,6 +11,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 class DataScrapper:
 	'''Class for data scrapping'''
 	def __init__(self):
@@ -19,7 +20,7 @@ class DataScrapper:
 		options = Options()
 		options.headless = True
 		options.add_argument="user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
-		self.driver = webdriver.Chrome(options=options)
+		self.driver = webdriver.Chrome(ChromeDriverManager().install())
 		self.driver.set_page_load_timeout(120)
 		self.driver.maximize_window()
 
@@ -37,16 +38,13 @@ class DataScrapper:
 			self.driver.close()
 			sys.exit()
 
-	def get_page_table(self, table_class) -> pd.DataFrame:
+	def get_page_table(self, df) -> pd.DataFrame:
 
-		element = WebDriverWait(self.driver, 20).until(
-			EC.presence_of_element_located((By.XPATH, "//div[@class='floatThead-wrapper']"))
-		)
-		soup = BeautifulSoup(self.driver.page_source, 'lxml')
-		table = soup.find("table", {"class":table_class})
-		tab_data = [[cell.text.replace('\r', '').replace('\n', '') for cell in row.find_all(["th","td"])]
-					for row in table.find_all("tr")]
-		df = pd.DataFrame(tab_data)
+		for data in self.driver.find_elements_by_xpath("//table[@id='headFixed']//tbody//tr"):
+			
+			tab_data = data.text.split(" ")
+			df.loc[len(df)] = tab_data
+		
 		return df
 
 	def get_scrape_data(self) -> pd.DataFrame:
@@ -58,8 +56,11 @@ class DataScrapper:
 			count += 1
 
 			print(f"Scraping Page {count}")
+
 			try:
-				df = df.append(self.get_page_table("table-bordered"))
+				column = ['S.No','Symbol','conf','Open','High','Low','Close','vwap','Vol','Prev. Close','Turnover','Trans','Diff','Range','Diff%','Range%','vwap%','120_days','180_days','52wk_high','52wk_low']
+				df = pd.DataFrame(columns = column)
+				df = df.append(self.get_page_table(df), ignore_index=True)
 				self.driver.find_element_by_xpath("//a[@class='next']").click()
 				
 			except NoSuchElementException:
@@ -72,8 +73,8 @@ class DataScrapper:
 	
 	def get_clean_df(self, df) -> pd.DataFrame:
 
-		new_df = df.drop_duplicates(keep='first') # drop all duplicates
-		new_header = new_df.iloc[0] # grabing the first row for the header
+		new_df = df.drop_duplicates(keep='first') 
+		new_header =  ['S.No','Symbol','conf','Open','High','Low','Close','vwap','Vol','Prev. Close','Turnover','Trans','Diff','Range','Diff%','Range%','vwap%','120_days','180_days','52wk_high','52wk_low'] # grabing the first row for the header
 		new_df = new_df[1:] # taking the data lower than the header row
 		new_df.columns = new_header # setting the header row as the df header
 		new_df.drop(["S.No"], axis=1, inplace=True)
