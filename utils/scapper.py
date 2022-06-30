@@ -53,15 +53,20 @@ class DataScrapper:
 		self.search()
 		df = pd.DataFrame()
 		count = 0
-		while True:
+		flag = True
+		while flag:
 			count += 1
+
 			print(f"Scraping Page {count}")
 			try:
 				df = df.append(self.get_page_table("table-bordered"))
+				self.driver.find_element_by_xpath("//a[@class='next']").click()
+				
 			except NoSuchElementException:
 				print("No more pages to scrape")
+				flag = False
 				break
-			self.driver.find_element_by_xpath("//a[@class='next']").click()
+			
 			time.sleep(2)
 		return df
 	
