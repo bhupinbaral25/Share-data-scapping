@@ -23,6 +23,3 @@ add your name  and email as a contributor
 
 # Thanks 
 
-
-
-
