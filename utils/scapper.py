@@ -17,13 +17,13 @@ class DataScrapper:
 	def __init__(self):
 
 		self.date = datetime.today().strftime('%d-%m-%Y')
-		options = webdriver.ChromeOptions()
+		options = Options()
 		options.add_argument('--headless')
 		options.add_argument('--no-sandbox')
 		options.add_argument('--disable-dev-shm-usage')
 		options.headless = True
 		options.add_argument="user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
-		self.driver = webdriver.Chrome(ChromeDriverManager().install())
+		self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 		self.driver.get('https://www.google.nl/')
 		#self.driver.set_page_load_timeout(120)
 		#self.driver.maximize_window()
