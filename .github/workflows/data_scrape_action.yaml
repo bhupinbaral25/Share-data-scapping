@@ -24,12 +24,17 @@ jobs:
         run: |
           pip install -r requirements.txt
       
-      - name: Install Chrome
-        run: |
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-          apt-get update
-          apt-get install -y google-chrome-stable
+      - name: install Chrome Driver
+          uses: actions/checkout@v2
+          uses: nanasess/setup-chromedriver@v1
+          with:
+        # Optional: do not specify to match Chrome's version
+          chromedriver-version: '88.0.4324.96'
+          run:
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+
       
       - name: scrapping of data script
         run: |
