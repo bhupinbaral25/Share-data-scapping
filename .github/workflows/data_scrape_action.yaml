@@ -45,4 +45,4 @@ jobs:
           git config --local user.name "bhupinbaral25"        
           git add .
           git commit -am "scrapped successfully!"
-          git push origin main
+          git push origin dev
