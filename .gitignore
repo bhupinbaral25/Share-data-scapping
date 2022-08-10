@@ -1,6 +1,6 @@
 venv/
-__pychache__/
+__pycache__/
 notebook/
 scrape_nepse.py
 data
-utils/__pychache__
+utils/__pycache__
