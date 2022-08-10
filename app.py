@@ -6,7 +6,6 @@ from utils import DataScrapper, required_columns
 def save_data():
 	scrapper = DataScrapper()
 	df = scrapper.get_scrape_data()
-	
 	data = scrapper.get_clean_df(df)
 	
 	date = scrapper.date
