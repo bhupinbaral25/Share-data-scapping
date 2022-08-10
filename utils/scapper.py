@@ -36,14 +36,14 @@ class DataScrapper:
 		search_btn = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='fromdate']")))
 		date_input.send_keys(self.date)
 		search_btn.click()
-		if self.driver.find_elements_by_xpath("//*[contains(text(), 'Could not find floorsheet matching the search criteria')]"):
+		if self.driver.find_elements(By.XPATH, "//*[contains(text(), 'Could not find floorsheet matching the search criteria')]"):
 
 			self.driver.close()
 			sys.exit()
 
 	def get_page_table(self, df) -> pd.DataFrame:
 
-		for data in self.driver.find_elements_by_xpath("//table[@id='headFixed']//tbody//tr"):
+		for data in self.driver.find_elements(By.XPATH,"//table[@id='headFixed']//tbody//tr"):
 			
 			tab_data = data.text.split(" ")
 			df.loc[len(df)] = tab_data
@@ -64,7 +64,7 @@ class DataScrapper:
 				column = ['S.No','Symbol','conf','Open','High','Low','Close','vwap','Vol','Prev. Close','Turnover','Trans','Diff','Range','Diff%','Range%','vwap%','120_days','180_days','52wk_high','52wk_low']
 				df = pd.DataFrame(columns = column)
 				df = df.append(self.get_page_table(df), ignore_index=True)
-				self.driver.find_element_by_xpath("//a[@class='next']").click()
+				self.driver.find_element(By.XPATH, "//a[@class='next']").click()
 				
 			except NoSuchElementException:
 				print("No more pages to scrape")
