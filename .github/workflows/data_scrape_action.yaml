@@ -1,48 +1,43 @@
-name: Nepse data auto scrapping
+name: Nepse data auto scraping
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
   schedule:
-    - cron: '15 11 * * *' # 11:15 AM UTC
-jobs:
+    - cron: '15 11 * * *' # 11:15 UTC = 17:00 NPT, after market close
 
-  build:
+permissions:
+  contents: write
+
+jobs:
+  scrape:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install ChromeDriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | cut -f 3 -d ' ' | cut -d '.' -f 1) \
-            && CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}) \
-            && curl --silent --show-error --location --fail --retry 3 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_RELEASE/chromedriver_linux64.zip" \
-            && cd /tmp \
-            && unzip chromedriver_linux64.zip \
-            && rm -rf chromedriver_linux64.zip \
-            && sudo mv chromedriver /usr/local/bin/chromedriver \
-            && sudo chmod +x /usr/local/bin/chromedriver \
-            && chromedriver --version
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Checkout 
-        uses: actions/checkout@v2
-
-      - name: Python Setup Environment
-        uses: actions/setup-python@v2
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
-      
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-      
-      - name: scrapping of data script
-        run: |
-          python3 app.py
-      - name: Commit and Push Files
+          python-version: '3.11'
+
+      # Chrome is preinstalled on ubuntu-latest; Selenium Manager
+      # downloads the matching chromedriver at runtime.
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        run: python app.py
+
+      - name: Commit and push data
         run: |
           git config --local user.email "bhupinbaral.729@gmail.com"
-          git config --local user.name "bhupinbaral25"        
-          git add .
-          git commit -am "scrapped successfully!"
-          git push origin main
+          git config --local user.name "bhupinbaral25"
+          git add newdata
+          if git diff --cached --quiet; then
+            echo "No new data to commit"
+          else
+            git commit -m "scrapped successfully!"
+            git push origin main
+          fi

@@ -1,3 +1,6 @@
-from utils.scapper import *
+from utils.scapper import DataScrapper
 
-required_columns = ['Symbol','Open','High','Low','Vol','Close','Prev. Close','Turnover','Date']
+required_columns = [
+    "Symbol", "Open", "High", "Low", "Vol",
+    "Close", "Prev. Close", "Turnover", "Date",
+]
